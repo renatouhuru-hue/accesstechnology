@@ -14,8 +14,8 @@ const statusLabels: Record<string, string> = {
 };
 const statusColors: Record<string, string> = {
   agendado: 'bg-amber-50 text-amber-700',
-  confirmado: 'bg-blue-50 text-blue-700',
-  em_andamento: 'bg-violet-50 text-violet-700',
+  confirmado: 'bg-teal-50 text-teal-700',
+  em_andamento: 'bg-teal-100 text-teal-800',
   concluido: 'bg-emerald-50 text-emerald-700',
   cancelado: 'bg-slate-200 text-slate-500',
 };
@@ -124,7 +124,7 @@ export default function CalendarPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Agenda" subtitle="Agendamento dos serviços." action={<Button onClick={() => openNew()}><Plus size={18} /> Novo agendamento</Button>} />
+      <PageHeader title="Agenda" eyebrow="Operação" subtitle="Agendamento dos serviços." action={<Button onClick={() => openNew()}><Plus size={18} /> Novo agendamento</Button>} />
       {error && <ErrorBox message={error} />}
 
       {editing && (

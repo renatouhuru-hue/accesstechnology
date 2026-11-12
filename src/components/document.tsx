@@ -105,16 +105,24 @@ export function InfoCard({
   title,
   children,
   className = '',
+  tone = 'emerald',
 }: {
   title: string;
   children: ReactNode;
   className?: string;
+  tone?: 'emerald' | 'teal' | 'slate';
 }) {
+  const styles = {
+    emerald: { border: 'border-t-emerald-400', dot: 'bg-emerald-500', label: 'text-emerald-700/70' },
+    teal: { border: 'border-t-teal-400', dot: 'bg-teal-500', label: 'text-teal-700/70' },
+    slate: { border: 'border-t-slate-300', dot: 'bg-slate-400', label: 'text-slate-500' },
+  }[tone];
+
   return (
-    <div className={`break-avoid rounded-xl border border-slate-200 bg-white p-4 ${className}`}>
+    <div className={`break-avoid rounded-xl border border-slate-200 border-t-2 bg-white p-4 ${styles.border} ${className}`}>
       <div className="mb-2.5 flex items-center gap-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-        <span className="text-[9.5px] font-semibold uppercase tracking-[0.18em] text-slate-400">{title}</span>
+        <span className={`h-1.5 w-1.5 rounded-full ${styles.dot}`} />
+        <span className={`text-[9.5px] font-semibold uppercase tracking-[0.18em] ${styles.label}`}>{title}</span>
       </div>
       <div className="space-y-1 text-[12px] leading-relaxed text-slate-600">{children}</div>
     </div>
@@ -140,7 +148,25 @@ export function ItemsTable({
   tone?: 'emerald' | 'violet';
 }) {
   if (!items.length) return null;
-  const dot = tone === 'emerald' ? 'bg-emerald-500' : 'bg-violet-500';
+  const styles =
+    tone === 'emerald'
+      ? {
+          dot: 'bg-emerald-500',
+          band: 'from-emerald-50 to-white',
+          label: 'text-emerald-700',
+          foot: 'bg-emerald-50/60',
+          footLabel: 'text-emerald-700/60',
+          footValue: 'text-emerald-900',
+        }
+      : {
+          dot: 'bg-teal-500',
+          band: 'from-teal-50 to-white',
+          label: 'text-teal-700',
+          foot: 'bg-teal-50/60',
+          footLabel: 'text-teal-700/60',
+          footValue: 'text-teal-900',
+        };
+
   const subtotal = items.reduce(
     (s, i) => s + Number(i.total_price ?? Number(i.quantity) * Number(i.unit_price)),
     0,
@@ -148,10 +174,10 @@ export function ItemsTable({
 
   return (
     <div className="break-avoid overflow-hidden rounded-xl border border-slate-200">
-      <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-2.5">
+      <div className={`flex items-center justify-between border-b border-slate-200 bg-gradient-to-r px-4 py-2.5 ${styles.band}`}>
         <div className="flex items-center gap-2">
-          <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
-          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">{title}</span>
+          <span className={`h-1.5 w-1.5 rounded-full ${styles.dot}`} />
+          <span className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${styles.label}`}>{title}</span>
         </div>
         <span className="text-[10px] font-medium text-slate-400">
           {items.length} {items.length === 1 ? 'item' : 'itens'}
@@ -184,11 +210,11 @@ export function ItemsTable({
           ))}
         </tbody>
         <tfoot>
-          <tr className="border-t border-slate-200 bg-slate-50/70">
-            <td colSpan={5} className="px-4 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+          <tr className={`border-t border-slate-200 ${styles.foot}`}>
+            <td colSpan={5} className={`px-4 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.14em] ${styles.footLabel}`}>
               Subtotal {title.toLowerCase()}
             </td>
-            <td className="px-4 py-2 text-right text-[12px] font-semibold tabular-nums text-slate-800">{money(subtotal)}</td>
+            <td className={`px-4 py-2 text-right text-[12px] font-semibold tabular-nums ${styles.footValue}`}>{money(subtotal)}</td>
           </tr>
         </tfoot>
       </table>
@@ -225,8 +251,8 @@ export function Totals({
               <span className="tabular-nums text-red-600">- {money(discount)}</span>
             </div>
           )}
-          <div className="mt-2 flex items-center justify-between rounded-lg bg-[#0b1220] px-3 py-2.5 text-white">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-300">Total geral</span>
+          <div className="mt-2 flex items-center justify-between rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 px-3 py-2.5 text-white shadow-sm shadow-emerald-600/20">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-50/90">Total geral</span>
             <span className="text-[17px] font-semibold tabular-nums">{money(total)}</span>
           </div>
         </div>
@@ -266,7 +292,7 @@ export function Signatures({
 
 export function DocFooter({ company }: { company: CompanySettings | null }) {
   return (
-    <div className="flex flex-col gap-1 border-t border-slate-200 bg-slate-50 px-7 py-4 text-[9.5px] text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-9">
+    <div className="flex flex-col gap-1 border-t border-emerald-100 bg-emerald-50/40 px-7 py-4 text-[9.5px] text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-9">
       <span>
         {company?.trade_name || 'Accesstechnology'} · {company?.company_name}
       </span>

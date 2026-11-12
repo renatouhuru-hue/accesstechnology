@@ -25,7 +25,8 @@ export function PageHeader({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div>
         {eyebrow && (
-          <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-600">
+          <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-700 ring-1 ring-inset ring-emerald-100">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
             {eyebrow}
           </div>
         )}
@@ -189,6 +190,7 @@ export function ErrorBox({ message }: { message: string }) {
 const tones = {
   slate: 'bg-slate-100 text-slate-700 ring-slate-200',
   blue: 'bg-blue-50 text-blue-700 ring-blue-100',
+  teal: 'bg-teal-50 text-teal-700 ring-teal-100',
   emerald: 'bg-emerald-50 text-emerald-700 ring-emerald-100',
   amber: 'bg-amber-50 text-amber-700 ring-amber-100',
   red: 'bg-red-50 text-red-700 ring-red-100',

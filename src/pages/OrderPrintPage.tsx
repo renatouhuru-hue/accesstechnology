@@ -88,7 +88,7 @@ export default function OrderPrintPage() {
       />
 
       <DocBody>
-        <div className="rounded-xl border border-emerald-100 bg-emerald-50/70 px-4 py-3.5">
+        <div className="rounded-xl border border-emerald-100 bg-gradient-to-r from-emerald-50 via-emerald-50/70 to-teal-50/50 px-4 py-3.5">
           <div className="text-[9.5px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Objetivo</div>
           <div className="mt-1 text-[15px] font-semibold leading-snug text-slate-800">
             {order.title || 'Serviços de tecnologia'}
@@ -118,7 +118,7 @@ export default function OrderPrintPage() {
             {client?.email && <InfoRow label="E-mail">{client.email}</InfoRow>}
           </InfoCard>
 
-          <InfoCard title="Condições" className="sm:col-span-2">
+          <InfoCard title="Condições" className="sm:col-span-2" tone="teal">
             <InfoRow label="Emissão">{formatDate(order.issue_date) || '—'}</InfoRow>
             <InfoRow label="Validade">{formatDate(order.valid_until) || '—'}</InfoRow>
             <InfoRow label="Pagamento">{order.payment_terms || 'A combinar'}</InfoRow>
@@ -149,7 +149,7 @@ export default function OrderPrintPage() {
             </div>
             <div className="text-right text-[10px] text-slate-400">
               Valor total
-              <div className="text-[13px] font-semibold tabular-nums text-slate-800">{money(total)}</div>
+              <div className="text-[13px] font-semibold tabular-nums text-emerald-700">{money(total)}</div>
             </div>
           </div>
         )}

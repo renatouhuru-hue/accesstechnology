@@ -69,7 +69,7 @@ export default function FinancePage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Financeiro" subtitle="Receitas, despesas e recebimentos." action={<Button onClick={() => setEditing({ kind: 'receita', amount: 0, status: 'pendente', description: '', due_date: new Date().toISOString().slice(0, 10) })}><Plus size={18} /> Novo lançamento</Button>} />
+      <PageHeader title="Financeiro" eyebrow="Financeiro" subtitle="Receitas, despesas e recebimentos." action={<Button onClick={() => setEditing({ kind: 'receita', amount: 0, status: 'pendente', description: '', due_date: new Date().toISOString().slice(0, 10) })}><Plus size={18} /> Novo lançamento</Button>} />
       {error && <ErrorBox message={error} />}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3">

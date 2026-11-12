@@ -75,7 +75,7 @@ export default function ReceiptsPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Recibos" subtitle="Recibos de serviços e materiais." action={<Button onClick={openNew}><Plus size={18} /> Novo recibo</Button>} />
+      <PageHeader title="Recibos" eyebrow="Financeiro" subtitle="Recibos de serviços e materiais." action={<Button onClick={openNew}><Plus size={18} /> Novo recibo</Button>} />
       {error && <ErrorBox message={error} />}
 
       {editing && (

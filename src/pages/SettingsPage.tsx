@@ -62,6 +62,7 @@ export default function SettingsPage() {
     <div className="space-y-4">
       <PageHeader
         title="Configurações"
+        eyebrow="Sistema"
         subtitle="Dados que aparecem no orçamento, OS e recibo."
         action={<Button onClick={save}><Save size={16} /> Salvar</Button>}
       />

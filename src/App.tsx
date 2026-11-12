@@ -118,7 +118,7 @@ export default function App() {
                       className={({ isActive }) =>
                         `group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13.5px] font-medium transition-colors ${
                           isActive
-                            ? 'bg-emerald-400/10 text-white before:absolute before:left-0 before:top-1/2 before:h-5 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-emerald-400'
+                            ? 'bg-gradient-to-r from-emerald-400/15 via-emerald-400/5 to-transparent text-white before:absolute before:left-0 before:top-1/2 before:h-5 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-emerald-400'
                             : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
                         }`
                       }

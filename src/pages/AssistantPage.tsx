@@ -84,7 +84,7 @@ export default function AssistantPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Assistente IA" subtitle="Gere relatórios, textos e análises com base nos seus dados." />
+      <PageHeader title="Assistente IA" eyebrow="Inteligência" subtitle="Gere relatórios, textos e análises com base nos seus dados." />
 
       {!isGroqAvailable && <ErrorBox message="Groq não configurada. Defina VITE_GROQ_API_KEY no .env.local (ou na Vercel)." />}
 

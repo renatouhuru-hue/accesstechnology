@@ -171,7 +171,7 @@ export default function ClientsPage() {
                   </td>
                 </tr>
               ) : filtered.map(c => (
-                <tr key={c.id} className="group border-b border-slate-100 transition-colors last:border-0 hover:bg-slate-50/70">
+                <tr key={c.id} className="group border-b border-slate-100 transition-colors last:border-0 hover:bg-emerald-50/40">
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-3">
                       <Avatar name={c.trade_name || c.company_name} />

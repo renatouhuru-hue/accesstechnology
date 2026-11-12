@@ -76,6 +76,7 @@ export default function CatalogPage() {
     <div className="space-y-4">
       <PageHeader
         title="Catálogo"
+        eyebrow="Inventário"
         subtitle="Materiais e serviços com preço de venda e custo."
         action={<Button onClick={() => setEditing({ ...empty })}><Plus size={18} /> Novo item</Button>}
       />
@@ -131,7 +132,7 @@ export default function CatalogPage() {
             ) : filtered.map(i => (
               <tr key={i.id} className="border-t">
                 <td className="p-3">
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${i.kind === 'material' ? 'bg-blue-50 text-blue-700' : 'bg-violet-50 text-violet-700'}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${i.kind === 'material' ? 'bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-100' : 'bg-teal-50 text-teal-700 ring-1 ring-inset ring-teal-100'}`}>
                     {i.kind === 'material' ? 'Material' : 'Serviço'}
                   </span>
                 </td>

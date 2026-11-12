@@ -47,7 +47,8 @@ export default function ReceiptPrintPage() {
       <DocHeader company={company} kind="Recibo de pagamento" number={receipt.number} date={emissao} />
 
       <DocBody>
-        <div className="break-avoid overflow-hidden rounded-xl bg-[#0b1220] px-5 py-4 text-white">
+        <div className="break-avoid relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-700 via-emerald-800 to-teal-900 px-5 py-4 text-white">
+          <div className="pointer-events-none absolute -right-10 -top-12 h-32 w-32 rounded-full bg-emerald-400/25 blur-2xl" />
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <div className="text-[9.5px] font-semibold uppercase tracking-[0.2em] text-emerald-300">Valor recebido</div>
@@ -93,7 +94,7 @@ export default function ReceiptPrintPage() {
             </div>
           </InfoCard>
 
-          <InfoCard title="Detalhes do pagamento">
+          <InfoCard title="Detalhes do pagamento" tone="teal">
             <InfoRow label="Valor">{money(valor)}</InfoRow>
             <InfoRow label="Forma">{receipt.payment_method || '—'}</InfoRow>
             <InfoRow label="Data">{emissao}</InfoRow>

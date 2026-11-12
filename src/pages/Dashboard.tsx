@@ -12,7 +12,7 @@ import { quoteLabels } from './OrdersPage';
 
 const quoteTones: Record<string, Tone> = {
   rascunho: 'slate',
-  enviado: 'blue',
+  enviado: 'teal',
   aprovado: 'emerald',
   reprovado: 'red',
   cancelado: 'slate',
@@ -121,10 +121,10 @@ export default function Dashboard() {
       </section>
 
       <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Kpi icon={FileText} label="Propostas em aberto" value={String(openQuotes.length)} hint={`${orders.length} documentos no total`} tone="blue" />
-        <Kpi icon={Users} label="Clientes ativos" value={String(clients.length)} hint="base cadastrada" tone="violet" />
-        <Kpi icon={CalendarDays} label="Serviços em curso" value={String(running.length)} hint={`${approved.length} aprovados`} tone="amber" />
-        <Kpi icon={Wallet} label="A receber" value={money(receivables)} hint="lançamentos pendentes" tone="emerald" />
+        <Kpi icon={FileText} label="Propostas em aberto" value={String(openQuotes.length)} hint={`${orders.length} documentos no total`} tone="emerald" />
+        <Kpi icon={Users} label="Clientes ativos" value={String(clients.length)} hint="base cadastrada" tone="teal" />
+        <Kpi icon={CalendarDays} label="Serviços em curso" value={String(running.length)} hint={`${approved.length} aprovados`} tone="slate" />
+        <Kpi icon={Wallet} label="A receber" value={money(receivables)} hint="lançamentos pendentes" tone="dark" />
       </section>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
@@ -199,7 +199,7 @@ export default function Dashboard() {
                   const d = new Date(a.start_at);
                   return (
                     <li key={a.id} className="flex items-center gap-3 px-5 py-3">
-                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-slate-100 text-slate-700">
+                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-700">
                         <span className="text-[13px] font-semibold leading-none">{d.getDate()}</span>
                         <span className="mt-0.5 text-[8px] uppercase tracking-wider text-slate-400">
                           {d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')}
@@ -233,11 +233,18 @@ export default function Dashboard() {
   );
 }
 
-const kpiTones = {
-  blue: 'bg-blue-50 text-blue-600',
-  violet: 'bg-violet-50 text-violet-600',
-  amber: 'bg-amber-50 text-amber-600',
-  emerald: 'bg-emerald-50 text-emerald-600',
+const kpiStyles = {
+  emerald: 'border-emerald-100/80 bg-gradient-to-br from-emerald-50 via-white to-white',
+  teal: 'border-teal-100/80 bg-gradient-to-br from-teal-50 via-white to-white',
+  slate: 'border-slate-200/80 bg-gradient-to-br from-slate-50 to-white',
+  dark: 'border-transparent bg-gradient-to-br from-[#0b1220] via-[#0b1220] to-emerald-950',
+} as const;
+
+const kpiIconStyles = {
+  emerald: 'bg-emerald-100/80 text-emerald-700',
+  teal: 'bg-teal-100/80 text-teal-700',
+  slate: 'bg-slate-900/5 text-slate-600',
+  dark: 'bg-white/10 text-emerald-300',
 } as const;
 
 function Kpi({
@@ -251,19 +258,25 @@ function Kpi({
   label: string;
   value: string;
   hint?: string;
-  tone: keyof typeof kpiTones;
+  tone: keyof typeof kpiStyles;
 }) {
+  const dark = tone === 'dark';
   return (
-    <Card className="p-4">
-      <div className="flex items-start justify-between">
-        <div className="text-[11.5px] font-medium text-slate-500">{label}</div>
-        <div className={`grid h-9 w-9 place-items-center rounded-xl ${kpiTones[tone]}`}>
+    <div
+      className={`relative overflow-hidden rounded-2xl border p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.25)] ${kpiStyles[tone]}`}
+    >
+      {dark && <div className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-emerald-500/20 blur-2xl" />}
+      <div className="relative flex items-start justify-between">
+        <div className={`text-[11.5px] font-medium ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{label}</div>
+        <div className={`grid h-9 w-9 place-items-center rounded-xl ${kpiIconStyles[tone]}`}>
           <Icon size={17} />
         </div>
       </div>
-      <div className="mt-2 text-[24px] font-semibold leading-none tabular-nums text-slate-900">{value}</div>
-      {hint && <div className="mt-1.5 text-[11px] text-slate-400">{hint}</div>}
-    </Card>
+      <div className={`relative mt-2 text-[24px] font-semibold leading-none tabular-nums ${dark ? 'text-white' : 'text-slate-900'}`}>
+        {value}
+      </div>
+      {hint && <div className={`relative mt-1.5 text-[11px] ${dark ? 'text-slate-400' : 'text-slate-400'}`}>{hint}</div>}
+    </div>
   );
 }
 
