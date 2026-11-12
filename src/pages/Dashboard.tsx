@@ -75,7 +75,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <section className="relative overflow-hidden rounded-3xl bg-[#0b1220] px-6 py-7 text-white shadow-2xl shadow-slate-900/20 sm:px-8">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0d3260] via-[#0b2b52] to-[#071b33] px-6 py-7 text-white shadow-2xl shadow-blue-950/30 sm:px-8">
         <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-32 left-1/3 h-64 w-64 rounded-full bg-teal-400/10 blur-3xl" />
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -86,7 +86,7 @@ export default function Dashboard() {
             <h1 className="mt-2 text-[28px] font-semibold leading-tight tracking-tight sm:text-[32px]">
               {greeting()}, Renato
             </h1>
-            <p className="mt-1.5 max-w-xl text-[13.5px] leading-relaxed text-slate-400">
+            <p className="mt-1.5 max-w-xl text-[13.5px] leading-relaxed text-blue-100/70">
               Você tem <span className="font-medium text-white">{openQuotes.length} propostas em aberto</span> e{' '}
               <span className="font-medium text-white">{running.length} serviços em andamento</span>. Acompanhe tudo
               em um só lugar.
@@ -109,7 +109,7 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 backdrop-blur">
-              <div className="text-[10px] uppercase tracking-[0.14em] text-slate-400">Em aberto</div>
+              <div className="text-[10px] uppercase tracking-[0.14em] text-blue-200/60">Em aberto</div>
               <div className="mt-1 text-[18px] font-semibold tabular-nums">{money(openValue)}</div>
             </div>
             <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 backdrop-blur">
@@ -237,7 +237,7 @@ const kpiStyles = {
   emerald: 'border-emerald-100/80 bg-gradient-to-br from-emerald-50 via-white to-white',
   teal: 'border-teal-100/80 bg-gradient-to-br from-teal-50 via-white to-white',
   slate: 'border-slate-200/80 bg-gradient-to-br from-slate-50 to-white',
-  dark: 'border-transparent bg-gradient-to-br from-[#0b1220] via-[#0b1220] to-emerald-950',
+  dark: 'border-transparent bg-gradient-to-br from-[#0d3260] via-[#0b2b52] to-[#071b33]',
 } as const;
 
 const kpiIconStyles = {
@@ -267,7 +267,7 @@ function Kpi({
     >
       {dark && <div className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-emerald-500/20 blur-2xl" />}
       <div className="relative flex items-start justify-between">
-        <div className={`text-[11.5px] font-medium ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{label}</div>
+        <div className={`text-[11.5px] font-medium ${dark ? 'text-blue-200/60' : 'text-slate-500'}`}>{label}</div>
         <div className={`grid h-9 w-9 place-items-center rounded-xl ${kpiIconStyles[tone]}`}>
           <Icon size={17} />
         </div>
@@ -275,7 +275,7 @@ function Kpi({
       <div className={`relative mt-2 text-[24px] font-semibold leading-none tabular-nums ${dark ? 'text-white' : 'text-slate-900'}`}>
         {value}
       </div>
-      {hint && <div className={`relative mt-1.5 text-[11px] ${dark ? 'text-slate-400' : 'text-slate-400'}`}>{hint}</div>}
+      {hint && <div className={`relative mt-1.5 text-[11px] ${dark ? 'text-blue-200/50' : 'text-slate-400'}`}>{hint}</div>}
     </div>
   );
 }

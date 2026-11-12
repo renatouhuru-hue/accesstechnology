@@ -47,7 +47,7 @@ export function DocHeader({
   return (
     <div>
       <div className="h-1.5 bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-600" />
-      <div className="flex flex-wrap items-start justify-between gap-6 bg-[#0b1220] px-7 py-7 text-white sm:px-9">
+      <div className="flex flex-wrap items-start justify-between gap-6 bg-gradient-to-r from-[#0d3260] via-[#0b2b52] to-[#071b33] px-7 py-7 text-white sm:px-9">
         <div className="flex items-start gap-4">
           {company?.logo_url ? (
             <img src={company.logo_url} alt="" className="h-12 w-12 rounded-xl bg-white object-contain p-1" />
@@ -63,7 +63,7 @@ export function DocHeader({
             <div className="mt-1 text-[9.5px] font-semibold uppercase tracking-[0.22em] text-emerald-300">
               Consultoria e serviços de TI
             </div>
-            <div className="mt-2 text-[11px] text-slate-400">{company?.company_name}</div>
+            <div className="mt-2 text-[11px] text-blue-100/60">{company?.company_name}</div>
           </div>
         </div>
 
@@ -75,7 +75,7 @@ export function DocHeader({
           <div className="mt-2.5 text-[32px] font-semibold leading-none tracking-tight tabular-nums">
             #{number ?? '—'}
           </div>
-          <div className="mt-1.5 text-[11px] text-slate-400">
+          <div className="mt-1.5 text-[11px] text-blue-100/60">
             {date ? `Emitido em ${date}` : 'Emissão —'}
           </div>
           {status && <div className="mt-2 flex justify-end">{status}</div>}

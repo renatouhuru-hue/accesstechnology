@@ -445,18 +445,18 @@ export default function OrdersPage() {
           </div>
           <div className="mt-1.5 text-[11.5px] text-emerald-700/70">{approvedOrders.length} ordens confirmadas</div>
         </div>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0b1220] via-[#0b1220] to-emerald-950 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.45)]">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d3260] via-[#0b2b52] to-[#071b33] p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.45)]">
           <div className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-emerald-500/20 blur-2xl" />
           <div className="relative flex items-start justify-between">
             <div>
-              <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">Carteira total</div>
+              <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-blue-200/60">Carteira total</div>
               <div className="mt-1 text-[22px] font-semibold tabular-nums text-white">{money(totalAll)}</div>
             </div>
             <div className="grid h-9 w-9 place-items-center rounded-xl bg-white/10 text-emerald-300">
               <Wallet size={17} />
             </div>
           </div>
-          <div className="relative mt-1.5 text-[11.5px] text-slate-400">{orders.length} documentos emitidos</div>
+          <div className="relative mt-1.5 text-[11.5px] text-blue-200/50">{orders.length} documentos emitidos</div>
         </div>
       </div>
 

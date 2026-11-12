@@ -85,7 +85,7 @@ export default function App() {
     <div className="min-h-screen bg-[#f5f6f8] text-slate-900">
       <div className="flex">
         <aside
-          className={`fixed inset-y-0 left-0 z-40 flex h-screen w-[272px] flex-col bg-[#0b1220] text-slate-100 shadow-2xl shadow-slate-900/20 transition-transform lg:sticky lg:top-0 lg:z-30 lg:translate-x-0 ${
+          className={`fixed inset-y-0 left-0 z-40 flex h-screen w-[272px] flex-col bg-gradient-to-b from-[#0d3260] via-[#0a2547] to-[#071a30] text-slate-100 shadow-2xl shadow-blue-950/30 transition-transform lg:sticky lg:top-0 lg:z-30 lg:translate-x-0 ${
             open ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
@@ -97,7 +97,7 @@ export default function App() {
                 Orçamentos &amp; OS
               </div>
             </div>
-            <button className="ml-auto text-slate-500 hover:text-white lg:hidden" onClick={() => setOpen(false)}>
+            <button className="ml-auto text-blue-200/60 hover:text-white lg:hidden" onClick={() => setOpen(false)}>
               <X size={18} />
             </button>
           </div>
@@ -105,7 +105,7 @@ export default function App() {
           <nav className="flex-1 space-y-6 overflow-y-auto px-3 pb-4">
             {navGroups.map(group => (
               <div key={group.label}>
-                <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-blue-200/40">
                   {group.label}
                 </div>
                 <div className="space-y-1">
@@ -119,13 +119,13 @@ export default function App() {
                         `group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13.5px] font-medium transition-colors ${
                           isActive
                             ? 'bg-gradient-to-r from-emerald-400/15 via-emerald-400/5 to-transparent text-white before:absolute before:left-0 before:top-1/2 before:h-5 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-emerald-400'
-                            : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
+                            : 'text-blue-100/60 hover:bg-white/5 hover:text-slate-100'
                         }`
                       }
                     >
                       {({ isActive }) => (
                         <>
-                          <Icon size={18} className={isActive ? 'text-emerald-300' : 'text-slate-500 group-hover:text-slate-300'} />
+                          <Icon size={18} className={isActive ? 'text-emerald-300' : 'text-blue-200/40 group-hover:text-blue-100'} />
                           <span className="flex-1">{label}</span>
                           {tag && (
                             <span className="rounded-md bg-emerald-400/15 px-1.5 py-0.5 text-[9px] font-bold tracking-wider text-emerald-300">
@@ -149,14 +149,14 @@ export default function App() {
               </span>
               <div className="min-w-0 leading-tight">
                 <div className="text-[11px] font-medium text-slate-200">Dados sincronizados</div>
-                <div className="text-[10px] text-slate-500">Supabase · nuvem</div>
+                <div className="text-[10px] text-blue-200/50">Supabase · nuvem</div>
               </div>
             </div>
-            <div className="mt-3 px-1 text-[10px] text-slate-600">Accesstechnology · v1.0</div>
+            <div className="mt-3 px-1 text-[10px] text-blue-200/30">Accesstechnology · v1.0</div>
           </div>
         </aside>
 
-        {open && <div className="fixed inset-0 z-30 bg-slate-900/40 backdrop-blur-sm lg:hidden" onClick={() => setOpen(false)} />}
+        {open && <div className="fixed inset-0 z-30 bg-blue-950/50 backdrop-blur-sm lg:hidden" onClick={() => setOpen(false)} />}
 
         <main className="min-w-0 flex-1 surface-grid">
           <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
@@ -183,7 +183,7 @@ export default function App() {
                   <div className="capitalize">{today}</div>
                 </div>
                 <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white py-1 pl-1 pr-3 shadow-sm">
-                  <span className="grid h-7 w-7 place-items-center rounded-full bg-slate-900 text-[10px] font-bold text-white">
+                  <span className="grid h-7 w-7 place-items-center rounded-full bg-[#0c2d57] text-[10px] font-bold text-white">
                     RA
                   </span>
                   <span className="hidden text-[12px] font-medium text-slate-700 sm:block">Renato</span>
