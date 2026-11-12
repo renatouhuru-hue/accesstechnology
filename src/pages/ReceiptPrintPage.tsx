@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import type { Client, CompanySettings, Receipt } from '../types';
 import { supabase } from '../lib/supabase';
 import { money } from '../components/ui';
+import { valorPorExtenso } from '../lib/extenso';
+import { DocBody, DocFooter, DocHeader, DocPage, InfoCard, InfoRow, Signatures } from '../components/document';
 
 export default function ReceiptPrintPage() {
   const { id } = useParams();
@@ -24,59 +26,89 @@ export default function ReceiptPrintPage() {
         }
         const { data: cs } = await supabase.from('company_settings').select('*').eq('id', 1).single();
         setCompany(cs);
-      } catch (e: any) { setError(e?.message || 'Erro ao carregar recibo'); }
+      } catch (e: any) {
+        setError(e?.message || 'Erro ao carregar recibo');
+      }
     })();
   }, [id]);
 
   if (error) return <div className="p-8 text-red-600">{error}</div>;
-  if (!receipt) return <div className="p-8 text-slate-500">Carregando…</div>;
+  if (!receipt) return <div className="grid min-h-screen place-items-center text-sm text-slate-500">Carregando recibo…</div>;
 
   const valor = Number(receipt.amount);
-  const valorExtenso = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const emissao = receipt.issue_date
+    ? new Date(receipt.issue_date + 'T00:00:00').toLocaleDateString('pt-BR')
+    : '—';
+  const clientName = client?.trade_name || client?.company_name || '—';
+  const fullName = client?.trade_name && client?.company_name ? client.company_name : '';
 
   return (
-    <div className="min-h-screen bg-slate-100 py-6 print:bg-white print:py-0">
-      <div className="max-w-2xl mx-auto bg-white p-8 shadow print:shadow-none">
-        <div className="border-b pb-4">
-          <div className="text-2xl font-bold">{company?.trade_name || 'Accesstechnology'}</div>
-          <div className="text-sm text-slate-600">{company?.company_name}</div>
-          <div className="text-sm text-slate-600">CNPJ: {company?.cnpj} · {company?.phone}</div>
-          <div className="text-sm text-slate-600">{company?.address} — {company?.city}/{company?.state}</div>
+    <DocPage backTo="/recibos">
+      <DocHeader company={company} kind="Recibo de pagamento" number={receipt.number} date={emissao} />
+
+      <DocBody>
+        <div className="break-avoid overflow-hidden rounded-xl bg-[#0b1220] px-5 py-4 text-white">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <div className="text-[9.5px] font-semibold uppercase tracking-[0.2em] text-emerald-300">Valor recebido</div>
+              <div className="mt-1 text-[28px] font-semibold leading-none tabular-nums">{money(valor)}</div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-medium text-slate-200 ring-1 ring-inset ring-white/10">
+                {receipt.payment_method || 'Não informado'}
+              </span>
+              <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-[10px] font-medium text-emerald-200 ring-1 ring-inset ring-emerald-400/20">
+                {emissao}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <div className="text-center my-6">
-          <div className="text-xl font-semibold">RECIBO</div>
-          <div className="text-sm text-slate-500">Nº {receipt.number ?? '—'}</div>
-        </div>
+        <p className="text-[12.5px] leading-relaxed text-slate-600">
+          Recebi de <strong className="font-semibold text-slate-800">{clientName}</strong>
+          {client?.cnpj ? `, inscrito no CNPJ sob o nº ${client.cnpj},` : ''} a importância de{' '}
+          <strong className="font-semibold text-slate-800">{valorPorExtenso(valor)}</strong>
+          {receipt.description ? (
+            <>
+              , referente a <span className="text-slate-700">{receipt.description}</span>
+            </>
+          ) : null}
+          , conforme detalhamento abaixo.
+        </p>
 
-        <div className="text-sm leading-relaxed">
-          <p>
-            Recebi de <strong>{client?.trade_name || client?.company_name || '—'}</strong>
-            {client?.cnpj ? ` (CNPJ ${client.cnpj})` : ''} a importância de <strong>{valorExtenso}</strong>
-            {receipt.description ? ` referente a ${receipt.description}` : ''}.
-          </p>
-          <p className="mt-3">
-            Forma de pagamento: <strong>{receipt.payment_method || '—'}</strong> · Data: <strong>{receipt.issue_date ? new Date(receipt.issue_date + 'T00:00:00').toLocaleDateString('pt-BR') : '—'}</strong>
-          </p>
-          {receipt.notes && <p className="mt-3 text-slate-600">{receipt.notes}</p>}
+        <div className="grid gap-4 sm:grid-cols-2">
+          <InfoCard title="Pagador">
+            <div className="text-[13px] font-semibold text-slate-800">{clientName}</div>
+            {fullName && <div className="text-[10.5px] text-slate-400">{fullName}</div>}
+            <div className="mt-2 space-y-1">
+              <InfoRow label="CNPJ">{client?.cnpj || '—'}</InfoRow>
+              <InfoRow label="Endereço">
+                {[client?.address, client?.city, client?.state].filter(Boolean).join(', ') || '—'}
+              </InfoRow>
+              <InfoRow label="Contato">{client?.contact_name || client?.phone || '—'}</InfoRow>
+            </div>
+          </InfoCard>
+
+          <InfoCard title="Detalhes do pagamento">
+            <InfoRow label="Valor">{money(valor)}</InfoRow>
+            <InfoRow label="Forma">{receipt.payment_method || '—'}</InfoRow>
+            <InfoRow label="Data">{emissao}</InfoRow>
+            <InfoRow label="Recibo">Nº {receipt.number ?? '—'}</InfoRow>
+            {receipt.notes && <InfoRow label="Notas">{receipt.notes}</InfoRow>}
+          </InfoCard>
         </div>
 
         {company?.bank_info && (
-          <div className="mt-6 text-sm border-t pt-3">
-            <div className="text-xs uppercase text-slate-500">Dados bancários</div>
-            <div>{company.bank_info}</div>
+          <div className="break-avoid rounded-xl border border-slate-200 px-4 py-3 text-[11.5px]">
+            <div className="text-[9.5px] font-semibold uppercase tracking-[0.18em] text-slate-400">Dados bancários</div>
+            <div className="mt-0.5 font-medium text-slate-700">{company.bank_info}</div>
           </div>
         )}
 
-        <div className="mt-12 text-center text-sm">
-          <div className="border-t pt-1 inline-block px-10">{company?.city || 'Aracaju'}, {new Date().toLocaleDateString('pt-BR')}</div>
-          <div className="mt-10 border-t pt-1 inline-block px-10">{company?.trade_name || 'Accesstechnology'}</div>
-        </div>
+        <Signatures city={company?.city} companyName={company?.trade_name} clientName={clientName} />
+      </DocBody>
 
-        <div className="mt-6 flex justify-end print:hidden">
-          <button onClick={() => window.print()} className="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm">Imprimir / Salvar PDF</button>
-        </div>
-      </div>
-    </div>
+      <DocFooter company={company} />
+    </DocPage>
   );
 }

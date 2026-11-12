@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Plus, Pencil, Trash2, Save, ArrowLeft, Printer, Upload, Copy } from 'lucide-react';
+import { Plus, Pencil, Trash2, Save, ArrowLeft, Printer, Upload, Search } from 'lucide-react';
 import type { CatalogItem, Client, ItemKind, Order, OrderItem } from '../types';
 import { listRows, insertRow, updateRow, deleteRow } from '../lib/db';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { Card, PageHeader, Button, Field, TextArea, Select, Empty, ErrorBox, money } from '../components/ui';
+import type { Tone } from '../components/ui';
+import { Card, PageHeader, Button, Field, TextArea, Select, Empty, ErrorBox, money, Badge, Avatar } from '../components/ui';
 
 const quoteLabels: Record<string, string> = {
   rascunho: 'Rascunho',
@@ -21,19 +22,19 @@ const serviceLabels: Record<string, string> = {
   cancelado: 'Cancelado',
 };
 
-const quoteColors: Record<string, string> = {
-  rascunho: 'bg-slate-100 text-slate-700',
-  enviado: 'bg-blue-50 text-blue-700',
-  aprovado: 'bg-emerald-50 text-emerald-700',
-  reprovado: 'bg-red-50 text-red-700',
-  cancelado: 'bg-slate-200 text-slate-500',
+const quoteTones: Record<string, Tone> = {
+  rascunho: 'slate',
+  enviado: 'blue',
+  aprovado: 'emerald',
+  reprovado: 'red',
+  cancelado: 'slate',
 };
-const serviceColors: Record<string, string> = {
-  nao_iniciado: 'bg-slate-100 text-slate-700',
-  agendado: 'bg-amber-50 text-amber-700',
-  em_andamento: 'bg-blue-50 text-blue-700',
-  concluido: 'bg-emerald-50 text-emerald-700',
-  cancelado: 'bg-slate-200 text-slate-500',
+const serviceTones: Record<string, Tone> = {
+  nao_iniciado: 'slate',
+  agendado: 'amber',
+  em_andamento: 'blue',
+  concluido: 'emerald',
+  cancelado: 'slate',
 };
 
 type DraftItem = Partial<OrderItem> & { _key: string };
@@ -66,6 +67,9 @@ export default function OrdersPage() {
   const [importOpen, setImportOpen] = useState(false);
   const [importText, setImportText] = useState('');
   const [importMarkup, setImportMarkup] = useState('30');
+  const [totals, setTotals] = useState<Record<string, number>>({});
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const load = async () => {
     try {
@@ -79,6 +83,15 @@ export default function OrdersPage() {
       setOrders(o);
       setClients(c);
       setCatalog(cat);
+
+      if (supabase) {
+        const { data: rows } = await supabase.from('order_items').select('order_id,total_price');
+        const map: Record<string, number> = {};
+        for (const r of rows || []) {
+          map[r.order_id] = (map[r.order_id] || 0) + Number(r.total_price || 0);
+        }
+        setTotals(map);
+      }
     } catch (e: any) {
       setError(e?.message || 'Erro ao carregar orçamentos');
     } finally {
@@ -252,6 +265,28 @@ export default function OrdersPage() {
     setImportText('');
   };
 
+  const filteredOrders = orders.filter(o => {
+    const cli = clients.find(c => c.id === o.client_id);
+    const q = search.trim().toLowerCase();
+    const matchesQuery =
+      !q ||
+      [o.number?.toString(), cli?.company_name, cli?.trade_name, o.title]
+        .filter(Boolean)
+        .some(v => String(v).toLowerCase().includes(q));
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'aberto' && (o.quote_status === 'rascunho' || o.quote_status === 'enviado')) ||
+      (statusFilter === 'aprovado' && o.quote_status === 'aprovado') ||
+      (statusFilter === 'concluido' && o.service_status === 'concluido');
+    return matchesQuery && matchesStatus;
+  });
+
+  const openOrders = orders.filter(o => o.quote_status === 'rascunho' || o.quote_status === 'enviado');
+  const approvedOrders = orders.filter(o => o.quote_status === 'aprovado');
+  const totalOpen = openOrders.reduce((s, o) => s + (totals[o.id] || 0), 0);
+  const totalApproved = approvedOrders.reduce((s, o) => s + (totals[o.id] || 0), 0);
+  const totalAll = orders.reduce((s, o) => s + (totals[o.id] || 0), 0);
+
   if (!isSupabaseConfigured) return <ErrorBox message="Supabase não configurado." />;
 
   if (editing) {
@@ -368,55 +403,159 @@ export default function OrdersPage() {
     );
   }
 
+  const statusFilters = [
+    { value: 'all', label: 'Todos' },
+    { value: 'aberto', label: 'Em aberto' },
+    { value: 'aprovado', label: 'Aprovados' },
+    { value: 'concluido', label: 'Concluídos' },
+  ];
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <PageHeader
-        title="Orçamentos / OS"
-        subtitle="Propostas, ordens de serviço, status e acompanhamento."
+        eyebrow="Comercial"
+        title="Orçamentos & OS"
+        subtitle="Propostas, ordens de serviço e acompanhamento de cada etapa."
         action={<Button onClick={openNew}><Plus size={18} /> Novo orçamento</Button>}
       />
       {error && <ErrorBox message={error} />}
 
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.25)]">
+          <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">Em aberto</div>
+          <div className="mt-1 text-[22px] font-semibold tabular-nums text-slate-900">{money(totalOpen)}</div>
+          <div className="mt-0.5 text-[11.5px] text-slate-500">{openOrders.length} propostas aguardando</div>
+        </div>
+        <div className="rounded-2xl border border-emerald-200/70 bg-gradient-to-br from-emerald-50 to-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.25)]">
+          <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-emerald-700/70">Aprovado</div>
+          <div className="mt-1 text-[22px] font-semibold tabular-nums text-emerald-800">{money(totalApproved)}</div>
+          <div className="mt-0.5 text-[11.5px] text-emerald-700/70">{approvedOrders.length} ordens confirmadas</div>
+        </div>
+        <div className="rounded-2xl border border-slate-200/80 bg-[#0b1220] p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.35)]">
+          <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">Carteira total</div>
+          <div className="mt-1 text-[22px] font-semibold tabular-nums text-white">{money(totalAll)}</div>
+          <div className="mt-0.5 text-[11.5px] text-slate-400">{orders.length} documentos emitidos</div>
+        </div>
+      </div>
+
       <Card className="overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-slate-600">
-            <tr>
-              <th className="text-left p-3">#</th>
-              <th className="text-left p-3">Cliente</th>
-              <th className="text-left p-3">Título</th>
-              <th className="text-left p-3">Status</th>
-              <th className="text-left p-3">Serviço</th>
-              <th className="text-left p-3">Data</th>
-              <th className="p-3 w-32"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={7}><Empty message="Carregando…" /></td></tr>
-            ) : orders.length === 0 ? (
-              <tr><td colSpan={7}><Empty message="Nenhum orçamento cadastrado." /></td></tr>
-            ) : orders.map(o => {
-              const client = clients.find(c => c.id === o.client_id);
-              return (
-                <tr key={o.id} className="border-t hover:bg-slate-50">
-                  <td className="p-3 text-slate-500">{o.number ?? '—'}</td>
-                  <td className="p-3 font-medium">{client?.trade_name || client?.company_name || '—'}</td>
-                  <td className="p-3">{o.title || '—'}</td>
-                  <td className="p-3"><span className={`text-xs px-2 py-0.5 rounded-full ${quoteColors[o.quote_status]}`}>{quoteLabels[o.quote_status]}</span></td>
-                  <td className="p-3"><span className={`text-xs px-2 py-0.5 rounded-full ${serviceColors[o.service_status]}`}>{serviceLabels[o.service_status]}</span></td>
-                  <td className="p-3 text-slate-500">{o.issue_date ? new Date(o.issue_date + 'T00:00:00').toLocaleDateString('pt-BR') : '—'}</td>
-                  <td className="p-3">
-                    <div className="flex gap-1 justify-end">
-                      <Link to={`/ordens/${o.id}/imprimir`} target="_blank" className="p-1.5 rounded hover:bg-slate-100" title="Imprimir"><Printer size={16} /></Link>
-                      <button onClick={() => openEdit(o)} className="p-1.5 rounded hover:bg-slate-100" title="Editar"><Pencil size={16} /></button>
-                      <button onClick={() => removeOrder(o)} className="p-1.5 rounded hover:bg-red-50 text-red-600" title="Excluir"><Trash2 size={16} /></button>
+        <div className="flex flex-col gap-3 border-b border-slate-200/80 p-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative w-full lg:max-w-xs">
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Buscar por cliente, número ou título…"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2 pl-9 pr-3 text-[13px] text-slate-700 transition placeholder:text-slate-400 hover:border-slate-300 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/10"
+            />
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {statusFilters.map(f => (
+              <button
+                key={f.value}
+                onClick={() => setStatusFilter(f.value)}
+                className={`rounded-full px-3 py-1.5 text-[12px] font-medium transition ${
+                  statusFilter === f.value
+                    ? 'bg-slate-900 text-white shadow-sm'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[920px] text-sm">
+            <thead>
+              <tr className="border-b border-slate-200/80 text-[10px] uppercase tracking-[0.14em] text-slate-400">
+                <th className="px-4 py-3 text-left font-semibold">Nº</th>
+                <th className="px-2 py-3 text-left font-semibold">Cliente</th>
+                <th className="px-2 py-3 text-left font-semibold">Objetivo</th>
+                <th className="px-2 py-3 text-left font-semibold">Orçamento</th>
+                <th className="px-2 py-3 text-left font-semibold">Serviço</th>
+                <th className="px-2 py-3 text-left font-semibold">Data</th>
+                <th className="px-4 py-3 text-right font-semibold">Valor</th>
+                <th className="w-28 px-4 py-3"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr><td colSpan={8}><Empty message="Carregando orçamentos…" /></td></tr>
+              ) : filteredOrders.length === 0 ? (
+                <tr>
+                  <td colSpan={8}>
+                    <div className="flex flex-col items-center gap-3 p-12 text-center">
+                      <div className="grid h-12 w-12 place-items-center rounded-2xl bg-emerald-50 text-emerald-600">
+                        <Plus size={22} />
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-slate-700">
+                          {orders.length === 0 ? 'Nenhum orçamento ainda' : 'Nenhum resultado para esse filtro'}
+                        </div>
+                        <div className="text-xs text-slate-400">
+                          {orders.length === 0
+                            ? 'Crie a primeira proposta ou ordem de serviço.'
+                            : 'Ajuste a busca ou selecione outro status.'}
+                        </div>
+                      </div>
+                      {orders.length === 0 && <Button onClick={openNew}><Plus size={16} /> Novo orçamento</Button>}
                     </div>
                   </td>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              ) : filteredOrders.map(o => {
+                const client = clients.find(c => c.id === o.client_id);
+                const clientName = client?.trade_name || client?.company_name || '—';
+                return (
+                  <tr key={o.id} className="group border-b border-slate-100 transition-colors last:border-0 hover:bg-slate-50/70">
+                    <td className="px-4 py-3.5 text-[12px] font-medium tabular-nums text-slate-400">
+                      #{String(o.number ?? '—').padStart(2, '0')}
+                    </td>
+                    <td className="px-2 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <Avatar name={clientName} size="sm" />
+                        <div className="min-w-0">
+                          <div className="max-w-[190px] truncate text-[13px] font-medium text-slate-800">{clientName}</div>
+                          <div className="text-[11px] text-slate-400">{client?.cnpj || 'CNPJ não informado'}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="max-w-[260px] px-2 py-3.5">
+                      <div className="truncate text-[13px] text-slate-600">{o.title || '—'}</div>
+                      {o.scope && <div className="truncate text-[11px] text-slate-400">{o.scope}</div>}
+                    </td>
+                    <td className="px-2 py-3.5">
+                      <Badge tone={quoteTones[o.quote_status]} dot>{quoteLabels[o.quote_status]}</Badge>
+                    </td>
+                    <td className="px-2 py-3.5">
+                      <Badge tone={serviceTones[o.service_status]}>{serviceLabels[o.service_status]}</Badge>
+                    </td>
+                    <td className="px-2 py-3.5 text-[12px] tabular-nums text-slate-500">
+                      {o.issue_date ? new Date(o.issue_date + 'T00:00:00').toLocaleDateString('pt-BR') : '—'}
+                    </td>
+                    <td className="px-4 py-3.5 text-right text-[13px] font-semibold tabular-nums text-slate-900">
+                      {totals[o.id] ? money(totals[o.id]) : '—'}
+                    </td>
+                    <td className="px-4 py-3.5">
+                      <div className="flex justify-end gap-1 opacity-60 transition-opacity group-hover:opacity-100">
+                        <Link to={`/ordens/${o.id}/imprimir`} target="_blank" className="rounded-lg p-1.5 text-slate-500 transition hover:bg-white hover:text-slate-900 hover:shadow-sm" title="Imprimir">
+                          <Printer size={16} />
+                        </Link>
+                        <button onClick={() => openEdit(o)} className="rounded-lg p-1.5 text-slate-500 transition hover:bg-white hover:text-slate-900 hover:shadow-sm" title="Editar">
+                          <Pencil size={16} />
+                        </button>
+                        <button onClick={() => removeOrder(o)} className="rounded-lg p-1.5 text-slate-400 transition hover:bg-red-50 hover:text-red-600" title="Excluir">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </Card>
     </div>
   );
