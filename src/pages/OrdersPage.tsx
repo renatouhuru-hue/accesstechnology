@@ -351,17 +351,17 @@ export default function OrdersPage() {
           )}
 
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[820px]">
-              <thead className="bg-slate-50 text-slate-600">
-                <tr>
-                  <th className="text-left p-2">Tipo</th>
-                  <th className="text-left p-2">Descrição</th>
-                  <th className="text-right p-2 w-24">Qtd</th>
-                  <th className="text-left p-2 w-20">Un.</th>
-                  <th className="text-right p-2 w-28">Custo</th>
-                  <th className="text-right p-2 w-24">%</th>
-                  <th className="text-right p-2 w-32">Valor unit.</th>
-                  <th className="text-right p-2 w-32">Total</th>
+            <table className="w-full min-w-[820px] text-[12.5px]">
+              <thead>
+                <tr className="border-b border-slate-200 text-[10px] uppercase tracking-[0.12em] text-slate-400">
+                  <th className="p-2 text-left font-semibold">Tipo</th>
+                  <th className="p-2 text-left font-semibold">Descrição</th>
+                  <th className="w-24 p-2 text-right font-semibold">Qtd</th>
+                  <th className="w-20 p-2 text-left font-semibold">Un.</th>
+                  <th className="w-28 p-2 text-right font-semibold">Custo</th>
+                  <th className="w-24 p-2 text-right font-semibold">%</th>
+                  <th className="w-32 p-2 text-right font-semibold">Valor unit.</th>
+                  <th className="w-32 p-2 text-right font-semibold">Total</th>
                   <th className="w-10"></th>
                 </tr>
               </thead>
@@ -371,17 +371,17 @@ export default function OrdersPage() {
                 ) : items.map(it => (
                   <tr key={it._key} className="border-t">
                     <td className="p-2">
-                      <select value={it.kind} onChange={e => updateItem(it._key, { kind: e.target.value as ItemKind })} className="border rounded px-1 py-1 text-xs">
+                      <select value={it.kind} onChange={e => updateItem(it._key, { kind: e.target.value as ItemKind })} className="rounded-lg border border-slate-200 bg-white px-1.5 py-1 text-[11px]">
                         <option value="material">Material</option>
                         <option value="service">Serviço</option>
                       </select>
                     </td>
-                    <td className="p-2"><input value={it.description || ''} onChange={e => updateItem(it._key, { description: e.target.value })} className="w-full border rounded px-2 py-1" placeholder="Descrição" /></td>
-                    <td className="p-2"><input type="number" step="0.001" value={String(it.quantity ?? 1)} onChange={e => updateItem(it._key, { quantity: Number(e.target.value) })} className="w-full border rounded px-2 py-1 text-right" /></td>
-                    <td className="p-2"><input value={it.unit || ''} onChange={e => updateItem(it._key, { unit: e.target.value })} className="w-full border rounded px-2 py-1" /></td>
-                    <td className="p-2"><input type="number" step="0.01" value={it.unit_cost == null ? '' : String(it.unit_cost)} onChange={e => updateItem(it._key, { unit_cost: e.target.value === '' ? null : Number(e.target.value) })} className="w-full border rounded px-2 py-1 text-right" /></td>
-                    <td className="p-2"><input type="number" step="0.01" value={it.markup_percent == null ? '' : String(it.markup_percent)} onChange={e => { const pct = Number(e.target.value); updateItem(it._key, { markup_percent: e.target.value === '' ? null : pct }); if (e.target.value !== '' && it.unit_cost != null) applyMarkup(it._key, pct); }} className="w-full border rounded px-2 py-1 text-right" /></td>
-                    <td className="p-2"><input type="number" step="0.01" value={String(it.unit_price ?? 0)} onChange={e => updateItem(it._key, { unit_price: Number(e.target.value) })} className="w-full border rounded px-2 py-1 text-right" /></td>
+                    <td className="p-2"><input value={it.description || ''} onChange={e => updateItem(it._key, { description: e.target.value })} className="w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[12.5px] text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" placeholder="Descrição" /></td>
+                    <td className="p-2"><input type="number" step="0.001" value={String(it.quantity ?? 1)} onChange={e => updateItem(it._key, { quantity: Number(e.target.value) })} className="w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-right text-[12.5px] tabular-nums text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" /></td>
+                    <td className="p-2"><input value={it.unit || ''} onChange={e => updateItem(it._key, { unit: e.target.value })} className="w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[12.5px] text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" /></td>
+                    <td className="p-2"><input type="number" step="0.01" value={it.unit_cost == null ? '' : String(it.unit_cost)} onChange={e => updateItem(it._key, { unit_cost: e.target.value === '' ? null : Number(e.target.value) })} className="w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-right text-[12.5px] tabular-nums text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" /></td>
+                    <td className="p-2"><input type="number" step="0.01" value={it.markup_percent == null ? '' : String(it.markup_percent)} onChange={e => { const pct = Number(e.target.value); updateItem(it._key, { markup_percent: e.target.value === '' ? null : pct }); if (e.target.value !== '' && it.unit_cost != null) applyMarkup(it._key, pct); }} className="w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-right text-[12.5px] tabular-nums text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" /></td>
+                    <td className="p-2"><input type="number" step="0.01" value={String(it.unit_price ?? 0)} onChange={e => updateItem(it._key, { unit_price: Number(e.target.value) })} className="w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-right text-[12.5px] tabular-nums text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" /></td>
                     <td className="p-2 text-right font-medium">{money(Number(it.quantity || 0) * Number(it.unit_price || 0))}</td>
                     <td className="p-2"><button onClick={() => setItems(prev => prev.filter(x => x._key !== it._key))} className="p-1 text-red-600 hover:bg-red-50 rounded"><Trash2 size={15} /></button></td>
                   </tr>

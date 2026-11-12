@@ -81,11 +81,15 @@ export default function ReceiptPrintPage() {
             <div className="text-[13px] font-semibold text-slate-800">{clientName}</div>
             {fullName && <div className="text-[10.5px] text-slate-400">{fullName}</div>}
             <div className="mt-2 space-y-1">
-              <InfoRow label="CNPJ">{client?.cnpj || '—'}</InfoRow>
-              <InfoRow label="Endereço">
-                {[client?.address, client?.city, client?.state].filter(Boolean).join(', ') || '—'}
-              </InfoRow>
-              <InfoRow label="Contato">{client?.contact_name || client?.phone || '—'}</InfoRow>
+              <InfoRow label="CNPJ">{client?.cnpj || 'Não informado'}</InfoRow>
+              {client?.address && (
+                <InfoRow label="Endereço">
+                  {[client.address, client.city, client.state].filter(Boolean).join(', ')}
+                </InfoRow>
+              )}
+              {(client?.contact_name || client?.phone) && (
+                <InfoRow label="Contato">{client.contact_name || client.phone}</InfoRow>
+              )}
             </div>
           </InfoCard>
 

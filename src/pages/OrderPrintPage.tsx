@@ -107,14 +107,14 @@ export default function OrderPrintPage() {
               <div className="text-[14px] font-semibold leading-tight text-slate-800">{clientName}</div>
               {fullName && <div className="mt-0.5 text-[10.5px] text-slate-400">{fullName}</div>}
             </div>
-            <InfoRow label="CNPJ">{client?.cnpj || '—'}</InfoRow>
-            <InfoRow label="Endereço">{client?.address || '—'}</InfoRow>
+            <InfoRow label="CNPJ">{client?.cnpj || 'Não informado'}</InfoRow>
+            {client?.address && <InfoRow label="Endereço">{client.address}</InfoRow>}
             <InfoRow label="Cidade">
               {[client?.city, client?.state].filter(Boolean).join('/') || '—'}
               {client?.zip ? ` · CEP ${client.zip}` : ''}
             </InfoRow>
-            <InfoRow label="Contato">{client?.contact_name || '—'}</InfoRow>
-            <InfoRow label="Telefone">{client?.phone || '—'}</InfoRow>
+            {client?.contact_name && <InfoRow label="Contato">{client.contact_name}</InfoRow>}
+            {client?.phone && <InfoRow label="Telefone">{client.phone}</InfoRow>}
             {client?.email && <InfoRow label="E-mail">{client.email}</InfoRow>}
           </InfoCard>
 
