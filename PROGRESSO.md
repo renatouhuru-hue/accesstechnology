@@ -36,6 +36,7 @@ Orçamentos/OS:
 - #2 Orizon Socorro — UPGRADE CFTV GALPÃO — R$ 12.514,00 (15 itens)
 - #3 Oral Santa Helena — PONTO DE REDE — R$ 335,00
 - #4 Oral Santa Helena — MANUTENÇÃO DESKTOP — R$ 400,00
+- #5 Orizon Socorro — UPGRADE BALANÇA + CFTV GALPÃO (união de #1 e #2) — R$ 25.689,00 (29 itens, `enviado`)
 
 ## Alterações recentes
 
