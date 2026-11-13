@@ -18,5 +18,5 @@
     "noUncheckedSideEffectImports": true,
     "types": ["vite/client", "node"]
   },
-  "include": ["src", "server", "api", "vite.config.ts", "server.ts"]
+  "include": ["src", "server", "api", "vite.config.ts", "server.ts", "proxy.ts"]
 }

@@ -37,22 +37,34 @@ Orçamentos/OS:
 - #3 Oral Santa Helena — PONTO DE REDE — R$ 335,00
 - #4 Oral Santa Helena — MANUTENÇÃO DESKTOP — R$ 400,00
 
-## Última alteração (em publicação)
+## Alterações recentes
 
-Troca das superfícies escuras (grafite `#0b1220`) por **azul profundo** (`#0d3260 → #071b33`):
+- **Senha de acesso** (HTTP Basic Auth via `proxy.ts`) — site inteiro protegido.
+- Troca das superfícies escuras (grafite `#0b1220`) por **azul profundo** (`#0d3260 → #071b33`):
 sidebar, topbar avatar, hero do painel, cartões escuros de KPI/orçamentos e cabeçalho dos documentos.
 Paleta mantida: azul + esmeralda + teal. Textos secundários em `blue-100/60`.
 
+## Acesso ao site (senha)
+
+O site inteiro é protegido por **HTTP Basic Auth** via Routing Middleware da Vercel (`proxy.ts` + `proxy` em `vercel.json`),
+o que inclui HTML, JS/CSS e as rotas de impressão.
+
+- **Usuário:** `acesso`
+- **Senha:** definida na variável de ambiente `APP_PASSWORD` (Vercel → Settings → Environment Variables)
+- Sem credenciais o servidor responde `401` com `WWW-Authenticate: Basic realm="Accesstechnology"`.
+
+Para trocar a senha: Vercel → Project → Settings → Environment Variables → editar `APP_PASSWORD` → Redeploy
+(ou `npx vercel env rm APP_PASSWORD production` e `npx vercel env add APP_PASSWORD production`).
+
 ## Pendências / próximos passos
 
-1. **Confirmar deploy** da troca de cores e revisar no navegador.
-2. **Logo oficial** no cabeçalho dos documentos — hoje é o monograma "AT".
+1. **Logo oficial** no cabeçalho dos documentos — hoje é o monograma "AT".
    Preencher `Configurações → Logo (URL)` em `company_settings.logo_url`.
-3. **Importação de orçamento de fornecedor**: hoje aceita texto `descrição;qtd;valor`.
+2. **Importação de orçamento de fornecedor**: hoje aceita texto `descrição;qtd;valor`.
    Avaliar upload de PDF/imagem com OCR e/ou CSV.
-4. **Markup padrão** salvo nas Configurações (hoje o campo inicia em 30% na tela).
-5. Completar telefone/e-mail dos clientes vindos de NF-e (campos ficaram vazios).
-6. Possível evolução: gráficos no painel, cards em vez de tabela em algumas listas.
+3. **Markup padrão** salvo nas Configurações (hoje o campo inicia em 30% na tela).
+4. Completar telefone/e-mail dos clientes vindos de NF-e (campos ficaram vazios).
+5. Possível evolução: gráficos no painel, cards em vez de tabela em algumas listas.
 
 ## Observações técnicas
 
@@ -61,4 +73,6 @@ Paleta mantida: azul + esmeralda + teal. Textos secundários em `blue-100/60`.
 - Serviços dos orçamentos da Orizon foram rateados para preservar o total original (nota em `orders.notes`).
 - Rotas de impressão ficam fora do shell: `/ordens/:id/imprimir` e `/recibos/:id/imprimir`.
 - CSS de impressão em `src/index.css` (`@page A4`, `print-color-adjust: exact`).
+- Middleware de senha em `proxy.ts` (usa `next()` de `@vercel/functions`); declarado em `vercel.json` → `proxy.entrypoint`.
+- A senha protege o site, não o banco: as políticas RLS do Supabase seguem acessíveis com a chave publicável.
 - Sempre validar com `npm run lint` e `npm run build` antes de publicar.
